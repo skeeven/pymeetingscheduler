@@ -34,3 +34,13 @@ CREATE TABLE IF NOT EXISTS responses (
     FOREIGN KEY (participant_id) REFERENCES participants (id),
     FOREIGN KEY (time_slot_id) REFERENCES time_slots (id)
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE polls ADD COLUMN user_id INTEGER;
