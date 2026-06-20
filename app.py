@@ -249,8 +249,12 @@ def create_poll_page() -> None:
         conn.commit()
         conn.close()
 
+        base_url = st.secrets.get("APP_BASE_CLOUD", "").rstrip("/")
+        participant_link = f"{base_url}/?poll={token}"
+
         st.success("Poll created.")
-        st.code(f"?poll={token}")
+        st.write("Send this link to attendees:")
+        st.code(participant_link)
 
 
 def response_page(token: str) -> None:
