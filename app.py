@@ -299,12 +299,39 @@ def response_page(token: str) -> None:
 
         selected_slots = []
 
-        for slot_id, start_time, end_time in slots:
-            label = format_slot(start_time, end_time)
-            is_available = st.checkbox(label, key=f"slot_{slot_id}")
+        slots_by_date = {}
 
-            if is_available:
-                selected_slots.append(slot_id)
+        for slot_id, start_time, end_time in slots:
+            start_dt = datetime.fromisoformat(start_time)
+            date_key = start_dt.date()
+            slots_by_date.setdefault(date_key, []).append(
+                (slot_id, start_time, end_time)
+            )
+
+        date_columns = st.columns(len(slots_by_date))
+
+        for column, date_key in zip(date_columns, sorted(slots_by_date)):
+            day_slots = slots_by_date[date_key]
+
+            with column:
+                st.markdown(f"### {date_key.strftime('%a, %b %d')}")
+
+                for slot_id, start_time, end_time in day_slots:
+                    start_dt = datetime.fromisoformat(start_time)
+                    end_dt = datetime.fromisoformat(end_time)
+
+                    label = (
+                        f"{start_dt.strftime('%I:%M %p')} - "
+                        f"{end_dt.strftime('%I:%M %p')}"
+                    )
+
+                    is_available = st.checkbox(
+                        label,
+                        key=f"slot_{slot_id}",
+                    )
+
+                    if is_available:
+                        selected_slots.append(slot_id)
 
         submitted = st.form_submit_button("Submit availability")
 
