@@ -1,0 +1,27 @@
+name: Keep SQLiteCloud Awake
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install sqlitecloud python-dotenv
+
+      - name: Ping SQLiteCloud
+        run: python keep_alive.py
+        env:
+          SQLITECLOUD_CONNECTION_STRING: ${{ secrets.SQLITECLOUD_CONNECTION_STRING }}
